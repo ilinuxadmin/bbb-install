@@ -246,38 +246,6 @@ main() {
 
   need_pkg curl
 
-  if [ "$DISTRO" == "xenial" ]; then 
-    rm -rf /etc/apt/sources.list.d/jonathonf-ubuntu-ffmpeg-4-xenial.list 
-    need_ppa rmescandon-ubuntu-yq-xenial.list         ppa:rmescandon/yq         CC86BB64 # Edit yaml files with yq
-    need_ppa libreoffice-ubuntu-ppa-xenial.list       ppa:libreoffice/ppa       1378B444 # Latest libreoffice
-    need_ppa bigbluebutton-ubuntu-support-xenial.list ppa:bigbluebutton/support E95B94BC # Latest version of ffmpeg
-    apt-get -y -o DPkg::options::="--force-confdef" -o DPkg::options::="--force-confold" install grub-pc update-notifier-common
-
-    # Remove default version of nodejs for Ubuntu 16.04 if installed
-    if dpkg -s nodejs | grep Version | grep -q 4.2.6; then
-      apt-get purge -y nodejs > /dev/null 2>&1
-    fi
-    apt-get purge -yq kms-core-6.0 kms-elements-6.0 kurento-media-server-6.0 > /dev/null 2>&1  # Remove older packages
-
-    if [ ! -f /etc/apt/sources.list.d/nodesource.list ]; then
-      curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-    fi
-    if ! apt-cache madison nodejs | grep -q node_8; then
-      err "Did not detect nodejs 8.x candidate for installation"
-    fi
-
-    if ! apt-key list A15703C6 | grep -q A15703C6; then
-      wget -qO - https://www.mongodb.org/static/pgp/server-3.4.asc | sudo apt-key add -
-    fi
-    if apt-key list A15703C6 | grep -q expired; then 
-      wget -qO - https://www.mongodb.org/static/pgp/server-3.4.asc | sudo apt-key add -
-    fi
-    rm -rf /etc/apt/sources.list.d/mongodb-org-4.0.list
-    echo "deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.4 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.4.list
-    MONGODB=mongodb-org
-    need_pkg openjdk-8-jre
-  fi
-
   if [ "$DISTRO" == "bionic" ]; then
     need_ppa rmescandon-ubuntu-yq-bionic.list         ppa:rmescandon/yq          CC86BB64 # Edit yaml files with yq
     need_ppa libreoffice-ubuntu-ppa-bionic.list       ppa:libreoffice/ppa        1378B444 # Latest version of libreoffice
@@ -512,7 +480,7 @@ check_version() {
     fi
   fi
 
-  echo "deb https://$PACKAGE_REPOSITORY/$VERSION bigbluebutton-$DISTRO main" > /etc/apt/sources.list.d/bigbluebutton.list
+  #echo "deb https://$PACKAGE_REPOSITORY/$VERSION bigbluebutton-$DISTRO main" > /etc/apt/sources.list.d/bigbluebutton.list
 }
 
 check_host() {
